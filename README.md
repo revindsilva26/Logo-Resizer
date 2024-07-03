@@ -1,1 +1,1 @@
-Logo Resizer
+## Logo Resizer
