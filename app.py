@@ -2,6 +2,7 @@ from flask import Flask, request, send_file, render_template_string
 from PIL import Image, ImageOps
 import requests
 from io import BytesIO
+import cairosvg
 
 app = Flask(__name__)
 
@@ -83,7 +84,12 @@ def index():
 def process():
     image_url = request.form['url']
     response = requests.get(image_url)
-    img = Image.open(BytesIO(response.content)).convert("RGBA")
+    content = response.content
+
+    if image_url.endswith(".svg"):
+        content = cairosvg.svg2png(bytestring=content)
+    
+    img = Image.open(BytesIO(content)).convert("RGBA")
     img_old = add_white_background(img)
 
     img_new = expand2square(img_old, (255 , 255, 255)).resize((300, 300))
